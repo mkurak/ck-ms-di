@@ -6,8 +6,8 @@ describe('ServiceContainer', () => {
         ServiceContainer.clear();
     });
 
-    describe('Singleton servis testleri.', () => {
-        test('Singleton servis eklenebilmeli ve ismiyle çekilebilmeli.', () => {
+    describe('Singleton service tests.', () => {
+        test('Singleton service should be added and retrieved by name.', () => {
             // Arrange
             @Service({ lifecycle: 'singleton' })
             class TestService_eP66MAYRg27K {
@@ -23,7 +23,7 @@ describe('ServiceContainer', () => {
             expect(service.test()).toBe('test');
         });
 
-        test('Singleton servis eklenebilmeli ve tipiyle çekilebilmeli.', () => {
+        test('Singleton service should be added and retrieved by type.', () => {
             // Arrange
             @Service({ lifecycle: 'singleton' })
             class TestService_DPefktwcJbvr {
@@ -39,7 +39,7 @@ describe('ServiceContainer', () => {
             expect(service.test()).toBe('test');
         });
 
-        test('Singleton servis eklenebilmeli, ismiyle çekilebilmeli ve her çağrımda aynı referansı dönmeli.', () => {
+        test('Singleton service should be added, retrieved by name, and return the same reference on each call.', () => {
             // Arrange
             @Service({ lifecycle: 'singleton' })
             class TestService_7FKRGTMSk923 {
@@ -56,7 +56,7 @@ describe('ServiceContainer', () => {
             expect(service1).toBe(service2);
         });
 
-        test('Singleton servis eklenebilmeli, tipiyle çekilebilmeli ve her çağrımda aynı referansı dönmeli.', () => {
+        test('Singleton service should be added, retrieved by type, and return the same reference on each call.', () => {
             // Arrange
             @Service({ lifecycle: 'singleton' })
             class TestService_SUdeg3RuGS76 {
@@ -73,7 +73,7 @@ describe('ServiceContainer', () => {
             expect(service1).toBe(service2);
         });
 
-        test('İsim verilerek singleton servis eklenebilmeli ve eklendiği ismiyle çekilebilmeli.', () => {
+        test('Singleton service should be added with a given name and retrieved by that name.', () => {
             // Arrange
             @Service({ name: 'W9cdpHV5Ecfx', lifecycle: 'singleton' })
             class TestService_W9cdpHV5Ecfx {
@@ -89,7 +89,7 @@ describe('ServiceContainer', () => {
             expect(service.test()).toBe('test');
         });
 
-        test('Başka servisleri inject eden singleton servis eklenebilmeli: Singleton bir servis.', () => {
+        test('Singleton service that injects another singleton service should be added.', () => {
             // Arrange
             @Service({ lifecycle: 'singleton' })
             class TestService_9fzZbAG3nHab {
@@ -114,7 +114,7 @@ describe('ServiceContainer', () => {
             expect(service.test()).toBe('test');
         });
 
-        test('Başka servisleri inject eden singleton servis eklenebilmeli: İki aynı servisin inject edilmesi', () => {
+        test('Singleton service that injects two of the same singleton service should be added.', () => {
             // Arrange
             @Service({ lifecycle: 'singleton' })
             class TestService_WJVeSTZbKuq7 {
@@ -144,7 +144,7 @@ describe('ServiceContainer', () => {
             expect(service.test2()).toBe('test');
         });
 
-        test('Başka servisleri inject eden singleton servis eklenebilmeli: İki aynı servisin inject edilmesi ve her ikisinin de aynı referans olması.', () => {
+        test('Singleton service that injects two of the same singleton service should be added and both should have the same reference.', () => {
             // Arrange
             @Service({ lifecycle: 'singleton' })
             class TestService_Bk3SdD6NkQ4U {
@@ -183,7 +183,7 @@ describe('ServiceContainer', () => {
             expect(service.test2()).toBe('test');
         });
 
-        test('Scoped bir servisi inject eden bir singleton servis eklenemeli.', () => {
+        test('Singleton service should not inject a scoped service.', () => {
             // Arrange
             @Service({ lifecycle: 'scoped' })
             class TestService_3wSssXnr8ZbG {
@@ -209,7 +209,7 @@ describe('ServiceContainer', () => {
             }).toThrow('Service with name TestService_3wSssXnr8ZbG is scoped and cannot be injected into a singleton service');
         });
 
-        test('Transient ve singleton servislerin aynı anda inject edilmesi', () => {
+        test('Singleton service should inject both transient and singleton services.', () => {
             // Arrange
             @Service({ lifecycle: 'transient' })
             class TestService_HNAuX8nxSUwB {
@@ -251,7 +251,7 @@ describe('ServiceContainer', () => {
             expect(answer.singletonServiceAnswer).toBe('test for singleton');
         });
 
-        test('Servis olmayan bir parametre kullanılamaz.', () => {
+        test('Non-service parameters should not be used.', () => {
             // Arrange
             @Service({ lifecycle: 'transient' })
             class TestService_5qcmAFeFv5f6V {
@@ -290,8 +290,8 @@ describe('ServiceContainer', () => {
         });
     });
 
-    describe('Transient servis testleri.', () => {
-        test('Transient servis eklenebilmeli ve ismiyle çekilebilmeli.', () => {
+    describe('Transient service tests.', () => {
+        test('Transient service should be added and retrieved by name.', () => {
             // Arrange
             @Service()
             class TestService_uESBCvxbUgPT {
@@ -307,7 +307,7 @@ describe('ServiceContainer', () => {
             expect(service.test()).toBe('test');
         });
 
-        test('İsim verilerek eklenen transient servis, verilen isimle çağrılabilmeli.', () => {
+        test('Transient service added with a given name should be retrieved by that name.', () => {
             // Arrange
             @Service({ name: '39WvJ4Yj74gg' })
             class TestService_39WvJ4Yj74gg {
@@ -323,7 +323,7 @@ describe('ServiceContainer', () => {
             expect(service.test()).toBe('test');
         });
 
-        test('Bir transient servisin iki kere inject edilmesinde her iki servis de farklı referans olmalı.', () => {
+        test('Injecting a transient service twice should result in different references.', () => {
             // Arrange
             @Service()
             class TestService_8DEEUXRZPRsz {
@@ -340,7 +340,7 @@ describe('ServiceContainer', () => {
             expect(service1).not.toBe(service2);
         });
 
-        test('Bir transient servisin iki kere inject edilmesinde her iki servis de farklı referans olmalı. (tip adıyla çekerek)', () => {
+        test('Injecting a transient service twice by type should result in different references.', () => {
             // Arrange
             @Service()
             class TestService_kfCFC5MLSAZb {
@@ -357,7 +357,7 @@ describe('ServiceContainer', () => {
             expect(service1).not.toBe(service2);
         });
 
-        test('Transient servisler singleton servislere bağımlı olabilir.', () => {
+        test('Transient services can depend on singleton services.', () => {
             // Arrange
             @Service({ lifecycle: 'singleton' })
             class TestService_8j4jyj6j5j6 {
@@ -382,7 +382,7 @@ describe('ServiceContainer', () => {
             expect(service.test()).toBe('test');
         });
 
-        test('Transient servisler singleton servislere bağımlı olabilir. (iki servis)', () => {
+        test('Transient services can depend on multiple singleton services.', () => {
             // Arrange
             @Service({ lifecycle: 'singleton' })
             class TestService_ftgbzLxS54Jx {
@@ -418,7 +418,7 @@ describe('ServiceContainer', () => {
             expect(service.test().singletonService2Answer).toBe('test');
         });
 
-        test('Transient servisler transient servislere bağımlı olabilir.', () => {
+        test('Transient services can depend on other transient services.', () => {
             // Arrange
             @Service()
             class TestService_JF476VsA7hgt {
@@ -443,7 +443,7 @@ describe('ServiceContainer', () => {
             expect(service.test()).toBe('test');
         });
 
-        test('Transient servisler transient servislere bağımlı olabilir. (iki servis)', () => {
+        test('Transient services can depend on multiple transient services.', () => {
             // Arrange
             @Service()
             class TestService_wDuJgPnKpXvh {
@@ -479,7 +479,7 @@ describe('ServiceContainer', () => {
             expect(service.test().transientService2Answer).toBe('test');
         });
 
-        test('Transient servisler scoped servislere bağımlı olabilir.', () => {
+        test('Transient services can depend on scoped services.', () => {
             // Arrange
             @Service({ lifecycle: 'scoped' })
             class TestService_RAR3Pm4LXT82 {
@@ -507,6 +507,145 @@ describe('ServiceContainer', () => {
 
             // Assert
             expect(answer).toBe('test for scoped');
+        });
+    });
+
+    describe('Scoped service tests.', () => {
+        test('Scoped service should be added and retrieved by name.', () => {
+            // Arrange
+            @Service({ lifecycle: 'scoped' })
+            class TestService_2Jr7dDx5Jr7d {
+                constructor() {}
+
+                public test() {
+                    return 'test';
+                }
+            }
+
+            // Act
+            const sessionId = ServiceContainer.beginSession();
+            const service = ServiceContainer.resolve<TestService_2Jr7dDx5Jr7d>('TestService_2Jr7dDx5Jr7d', sessionId);
+            const answer = service.test();
+            ServiceContainer.endSession(sessionId);
+
+            // Assert
+            expect(answer).toBe('test');
+        });
+
+        test('Scoped service cannot be created with the same name in multiple sessions, as all service definitions are kept in a single pool.', () => {
+            // Arrange
+            @Service({ lifecycle: 'scoped' })
+            class TestService_3Jr7dDx5Jr7d {
+                constructor() {}
+
+                public test() {
+                    return 'test';
+                }
+            }
+
+            // Act
+            const sessionId1 = ServiceContainer.beginSession();
+            const service1 = ServiceContainer.resolve<TestService_3Jr7dDx5Jr7d>('TestService_3Jr7dDx5Jr7d', sessionId1);
+
+            const sessionId2 = ServiceContainer.beginSession();
+            const service2 = ServiceContainer.resolve<TestService_3Jr7dDx5Jr7d>('TestService_3Jr7dDx5Jr7d', sessionId2);
+
+            // Assert
+            expect(() => {
+                service1.test();
+            }).not.toThrow();
+
+            expect(() => {
+                service2.test();
+            }).not.toThrow();
+
+            ServiceContainer.endSession(sessionId1);
+            ServiceContainer.endSession(sessionId2);
+        });
+
+        test('Scoped service can be used in multiple sessions and each should have different references.', () => {
+            // Arrange
+            @Service({ lifecycle: 'scoped' })
+            class TestService_4Jr7dDx5Jr7d {
+                constructor() {}
+
+                public test() {
+                    return 'test';
+                }
+            }
+
+            // Act
+            const sessionId1 = ServiceContainer.beginSession();
+            const service1 = ServiceContainer.resolve<TestService_4Jr7dDx5Jr7d>('TestService_4Jr7dDx5Jr7d', sessionId1);
+
+            const sessionId2 = ServiceContainer.beginSession();
+            const service2 = ServiceContainer.resolve<TestService_4Jr7dDx5Jr7d>('TestService_4Jr7dDx5Jr7d', sessionId2);
+
+            // Assert
+            expect(service1).not.toBe(service2);
+
+            ServiceContainer.endSession(sessionId1);
+            ServiceContainer.endSession(sessionId2);
+        });
+
+        test('Scoped service can depend on singleton services.', () => {
+            // Arrange
+            @Service({ lifecycle: 'singleton' })
+            class TestService_NyZMzV4dR3UC {
+                public test() {
+                    return 'test';
+                }
+            }
+
+            @Service({ lifecycle: 'scoped' })
+            class TestService_J9sAbmPaNWn6 {
+                constructor(private singletonService: TestService_NyZMzV4dR3UC) {}
+
+                public test() {
+                    return this.singletonService.test();
+                }
+            }
+
+            // Act
+            const sessionId = ServiceContainer.beginSession();
+            const service = ServiceContainer.resolve<TestService_J9sAbmPaNWn6>(TestService_J9sAbmPaNWn6, sessionId);
+
+            // Assert
+            expect(service.test()).toBe('test');
+
+            ServiceContainer.endSession(sessionId);
+        });
+
+        test('Scoped services in multiple sessions should have different references when they depend on transient services.', () => {
+            // Arrange
+            @Service({ lifecycle: 'transient' })
+            class TestService_3Hj7dDx5Jr7d {
+                public test() {
+                    return 'test';
+                }
+            }
+
+            @Service({ lifecycle: 'scoped' })
+            class TestService_3Jj7dDx5Jr7d {
+                constructor(private transientService: TestService_3Hj7dDx5Jr7d) {}
+
+                public test() {
+                    return this.transientService.test();
+                }
+            }
+
+            // Act
+            const sessionId1 = ServiceContainer.beginSession();
+            const service1 = ServiceContainer.resolve<TestService_3Jj7dDx5Jr7d>(TestService_3Jj7dDx5Jr7d, sessionId1);
+
+            const sessionId2 = ServiceContainer.beginSession();
+            const service2 = ServiceContainer.resolve<TestService_3Jj7dDx5Jr7d>(TestService_3Jj7dDx5Jr7d, sessionId2);
+
+            // Assert
+            expect(service1).not.toBe(service2);
+
+            ServiceContainer.endSession(sessionId1);
+            ServiceContainer.endSession(sessionId2);
         });
     });
 });
