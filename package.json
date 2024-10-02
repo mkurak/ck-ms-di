@@ -1,6 +1,6 @@
 {
     "name": "ck-ms-di",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "This package provides a comprehensive dependency injection solution. The DI structure it offers allows you to use ‘singleton’, ‘transient’, and especially ‘scoped’ services. It also provides scope management for your services with a scoped lifecycle. This enables you to create independent scopes for each request in your API applications, the event triggers in ck-ms-events if you’re using it, and the consumer methods in ck-ms-queue if you’re using that as well, and to use your scoped services within these scopes.",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -33,7 +33,10 @@
         "@types/jest": "^29.5.13",
         "@types/node": "^22.7.4",
         "@types/uuid": "^10.0.0",
+        "eslint": "^9.11.1",
+        "eslint-config-prettier": "^9.1.0",
         "jest": "^29.7.0",
+        "prettier": "^3.3.3",
         "ts-jest": "^29.2.5",
         "ts-node": "^10.9.2",
         "ts-node-dev": "^2.0.0",
