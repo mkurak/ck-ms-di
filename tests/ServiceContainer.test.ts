@@ -1,9 +1,11 @@
 import { Service } from '../src/decorators/Service';
-import ServiceContainer from '../src/ServiceContainer';
+import { ServiceContainer } from '../src/ServiceContainer';
 
 describe('ServiceContainer', () => {
+    const services: ServiceContainer = ServiceContainer.getInstance();
+
     afterAll(() => {
-        ServiceContainer.clear();
+        services.clear();
     });
 
     describe('Singleton service tests.', () => {
@@ -17,7 +19,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_eP66MAYRg27K>('TestService_eP66MAYRg27K');
+            const service = services.resolve<TestService_eP66MAYRg27K>('TestService_eP66MAYRg27K');
 
             // Assert
             expect(service.test()).toBe('test');
@@ -33,7 +35,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_DPefktwcJbvr>(TestService_DPefktwcJbvr);
+            const service = services.resolve<TestService_DPefktwcJbvr>(TestService_DPefktwcJbvr);
 
             // Assert
             expect(service.test()).toBe('test');
@@ -49,8 +51,8 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service1 = ServiceContainer.resolve<TestService_7FKRGTMSk923>('TestService_7FKRGTMSk923');
-            const service2 = ServiceContainer.resolve<TestService_7FKRGTMSk923>('TestService_7FKRGTMSk923');
+            const service1 = services.resolve<TestService_7FKRGTMSk923>('TestService_7FKRGTMSk923');
+            const service2 = services.resolve<TestService_7FKRGTMSk923>('TestService_7FKRGTMSk923');
 
             // Assert
             expect(service1).toBe(service2);
@@ -66,8 +68,8 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service1 = ServiceContainer.resolve<TestService_SUdeg3RuGS76>(TestService_SUdeg3RuGS76);
-            const service2 = ServiceContainer.resolve<TestService_SUdeg3RuGS76>(TestService_SUdeg3RuGS76);
+            const service1 = services.resolve<TestService_SUdeg3RuGS76>(TestService_SUdeg3RuGS76);
+            const service2 = services.resolve<TestService_SUdeg3RuGS76>(TestService_SUdeg3RuGS76);
 
             // Assert
             expect(service1).toBe(service2);
@@ -83,7 +85,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_W9cdpHV5Ecfx>('W9cdpHV5Ecfx');
+            const service = services.resolve<TestService_W9cdpHV5Ecfx>('W9cdpHV5Ecfx');
 
             // Assert
             expect(service.test()).toBe('test');
@@ -108,7 +110,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_B4jr5YCQn6t3>(TestService_B4jr5YCQn6t3);
+            const service = services.resolve<TestService_B4jr5YCQn6t3>(TestService_B4jr5YCQn6t3);
 
             // Assert
             expect(service.test()).toBe('test');
@@ -137,7 +139,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_3f5rYHb4jG5t2>(TestService_3f5rYHb4jG5t2);
+            const service = services.resolve<TestService_3f5rYHb4jG5t2>(TestService_3f5rYHb4jG5t2);
 
             // Assert
             expect(service.test1()).toBe('test');
@@ -175,7 +177,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_Sd7TTnPvMuTT>(TestService_Sd7TTnPvMuTT);
+            const service = services.resolve<TestService_Sd7TTnPvMuTT>(TestService_Sd7TTnPvMuTT);
 
             // Assert
             expect(service.service1).toBe(service.service2);
@@ -242,7 +244,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_W32HcpB8bDHE>(TestService_W32HcpB8bDHE);
+            const service = services.resolve<TestService_W32HcpB8bDHE>(TestService_W32HcpB8bDHE);
             const answer = service.test();
 
             // Assert
@@ -301,7 +303,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_uESBCvxbUgPT>('TestService_uESBCvxbUgPT');
+            const service = services.resolve<TestService_uESBCvxbUgPT>('TestService_uESBCvxbUgPT');
 
             // Assert
             expect(service.test()).toBe('test');
@@ -317,7 +319,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_39WvJ4Yj74gg>('39WvJ4Yj74gg');
+            const service = services.resolve<TestService_39WvJ4Yj74gg>('39WvJ4Yj74gg');
 
             // Assert
             expect(service.test()).toBe('test');
@@ -333,8 +335,8 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service1 = ServiceContainer.resolve<TestService_8DEEUXRZPRsz>('TestService_8DEEUXRZPRsz');
-            const service2 = ServiceContainer.resolve<TestService_8DEEUXRZPRsz>('TestService_8DEEUXRZPRsz');
+            const service1 = services.resolve<TestService_8DEEUXRZPRsz>('TestService_8DEEUXRZPRsz');
+            const service2 = services.resolve<TestService_8DEEUXRZPRsz>('TestService_8DEEUXRZPRsz');
 
             // Assert
             expect(service1).not.toBe(service2);
@@ -350,8 +352,8 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service1 = ServiceContainer.resolve<TestService_kfCFC5MLSAZb>(TestService_kfCFC5MLSAZb);
-            const service2 = ServiceContainer.resolve<TestService_kfCFC5MLSAZb>(TestService_kfCFC5MLSAZb);
+            const service1 = services.resolve<TestService_kfCFC5MLSAZb>(TestService_kfCFC5MLSAZb);
+            const service2 = services.resolve<TestService_kfCFC5MLSAZb>(TestService_kfCFC5MLSAZb);
 
             // Assert
             expect(service1).not.toBe(service2);
@@ -376,7 +378,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_5j5j5j5j5j5>(TestService_5j5j5j5j5j5);
+            const service = services.resolve<TestService_5j5j5j5j5j5>(TestService_5j5j5j5j5j5);
 
             // Assert
             expect(service.test()).toBe('test');
@@ -411,7 +413,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_uAkqRgPLFxce>(TestService_uAkqRgPLFxce);
+            const service = services.resolve<TestService_uAkqRgPLFxce>(TestService_uAkqRgPLFxce);
 
             // Assert
             expect(service.test().singletonServiceAnswer).toBe('test');
@@ -437,7 +439,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_jz4cvVXRhEwZ>(TestService_jz4cvVXRhEwZ);
+            const service = services.resolve<TestService_jz4cvVXRhEwZ>(TestService_jz4cvVXRhEwZ);
 
             // Assert
             expect(service.test()).toBe('test');
@@ -472,7 +474,7 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const service = ServiceContainer.resolve<TestService_hS6pSPuaPCHF>(TestService_hS6pSPuaPCHF);
+            const service = services.resolve<TestService_hS6pSPuaPCHF>(TestService_hS6pSPuaPCHF);
 
             // Assert
             expect(service.test().transientServiceAnswer).toBe('test');
@@ -500,10 +502,10 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const sessionId = ServiceContainer.beginSession();
-            const service = ServiceContainer.resolve<TestService_M8GerMymmccJ>(TestService_M8GerMymmccJ, sessionId);
+            const sessionId = services.beginSession();
+            const service = services.resolve<TestService_M8GerMymmccJ>(TestService_M8GerMymmccJ, sessionId);
             const answer = service.test();
-            ServiceContainer.endSession(sessionId);
+            services.endSession(sessionId);
 
             // Assert
             expect(answer).toBe('test for scoped');
@@ -523,10 +525,10 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const sessionId = ServiceContainer.beginSession();
-            const service = ServiceContainer.resolve<TestService_2Jr7dDx5Jr7d>('TestService_2Jr7dDx5Jr7d', sessionId);
+            const sessionId = services.beginSession();
+            const service = services.resolve<TestService_2Jr7dDx5Jr7d>('TestService_2Jr7dDx5Jr7d', sessionId);
             const answer = service.test();
-            ServiceContainer.endSession(sessionId);
+            services.endSession(sessionId);
 
             // Assert
             expect(answer).toBe('test');
@@ -544,11 +546,11 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const sessionId1 = ServiceContainer.beginSession();
-            const service1 = ServiceContainer.resolve<TestService_3Jr7dDx5Jr7d>('TestService_3Jr7dDx5Jr7d', sessionId1);
+            const sessionId1 = services.beginSession();
+            const service1 = services.resolve<TestService_3Jr7dDx5Jr7d>('TestService_3Jr7dDx5Jr7d', sessionId1);
 
-            const sessionId2 = ServiceContainer.beginSession();
-            const service2 = ServiceContainer.resolve<TestService_3Jr7dDx5Jr7d>('TestService_3Jr7dDx5Jr7d', sessionId2);
+            const sessionId2 = services.beginSession();
+            const service2 = services.resolve<TestService_3Jr7dDx5Jr7d>('TestService_3Jr7dDx5Jr7d', sessionId2);
 
             // Assert
             expect(() => {
@@ -559,8 +561,8 @@ describe('ServiceContainer', () => {
                 service2.test();
             }).not.toThrow();
 
-            ServiceContainer.endSession(sessionId1);
-            ServiceContainer.endSession(sessionId2);
+            services.endSession(sessionId1);
+            services.endSession(sessionId2);
         });
 
         test('Scoped service can be used in multiple sessions and each should have different references.', () => {
@@ -575,17 +577,17 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const sessionId1 = ServiceContainer.beginSession();
-            const service1 = ServiceContainer.resolve<TestService_4Jr7dDx5Jr7d>('TestService_4Jr7dDx5Jr7d', sessionId1);
+            const sessionId1 = services.beginSession();
+            const service1 = services.resolve<TestService_4Jr7dDx5Jr7d>('TestService_4Jr7dDx5Jr7d', sessionId1);
 
-            const sessionId2 = ServiceContainer.beginSession();
-            const service2 = ServiceContainer.resolve<TestService_4Jr7dDx5Jr7d>('TestService_4Jr7dDx5Jr7d', sessionId2);
+            const sessionId2 = services.beginSession();
+            const service2 = services.resolve<TestService_4Jr7dDx5Jr7d>('TestService_4Jr7dDx5Jr7d', sessionId2);
 
             // Assert
             expect(service1).not.toBe(service2);
 
-            ServiceContainer.endSession(sessionId1);
-            ServiceContainer.endSession(sessionId2);
+            services.endSession(sessionId1);
+            services.endSession(sessionId2);
         });
 
         test('Scoped service can depend on singleton services.', () => {
@@ -607,13 +609,13 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const sessionId = ServiceContainer.beginSession();
-            const service = ServiceContainer.resolve<TestService_J9sAbmPaNWn6>(TestService_J9sAbmPaNWn6, sessionId);
+            const sessionId = services.beginSession();
+            const service = services.resolve<TestService_J9sAbmPaNWn6>(TestService_J9sAbmPaNWn6, sessionId);
 
             // Assert
             expect(service.test()).toBe('test');
 
-            ServiceContainer.endSession(sessionId);
+            services.endSession(sessionId);
         });
 
         test('Scoped services in multiple sessions should have different references when they depend on transient services.', () => {
@@ -635,20 +637,20 @@ describe('ServiceContainer', () => {
             }
 
             // Act
-            const sessionId1 = ServiceContainer.beginSession();
-            const service1 = ServiceContainer.resolve<TestService_3Jj7dDx5Jr7d>(TestService_3Jj7dDx5Jr7d, sessionId1);
+            const sessionId1 = services.beginSession();
+            const service1 = services.resolve<TestService_3Jj7dDx5Jr7d>(TestService_3Jj7dDx5Jr7d, sessionId1);
 
-            const sessionId2 = ServiceContainer.beginSession();
-            const service2 = ServiceContainer.resolve<TestService_3Jj7dDx5Jr7d>(TestService_3Jj7dDx5Jr7d, sessionId2);
+            const sessionId2 = services.beginSession();
+            const service2 = services.resolve<TestService_3Jj7dDx5Jr7d>(TestService_3Jj7dDx5Jr7d, sessionId2);
 
             // Assert
             expect(service1).not.toBe(service2);
 
-            ServiceContainer.endSession(sessionId1);
-            ServiceContainer.endSession(sessionId2);
+            services.endSession(sessionId1);
+            services.endSession(sessionId2);
         });
 
-        test('Bir soped servis çözülürken sessionId belirtilmezse hata fırlatılır.', () => {
+        test('An error should be thrown if a scoped service is resolved without specifying a sessionId.', () => {
             // Arrange
             @Service({ lifecycle: 'scoped' })
             class TestService_fqyjnDU2GpvV {
@@ -662,8 +664,37 @@ describe('ServiceContainer', () => {
             // Act
             // Assert
             expect(() => {
-                ServiceContainer.resolve<TestService_fqyjnDU2GpvV>('TestService_fqyjnDU2GpvV');
+                services.resolve<TestService_fqyjnDU2GpvV>('TestService_fqyjnDU2GpvV');
             }).toThrow('Service with name TestService_fqyjnDU2GpvV is scoped and requires a session ID for resolution');
         });
+    });
+
+    test('Servis ServiceContainer sınıfına bağımlıysa, güncel instance kendisine verilir.', () => {
+        // Arrange
+        @Service()
+        class TestService_n3TZhF8PLp7J {
+            constructor() {}
+
+            public test() {
+                return 'test: TestService_n3TZhF8PLp7J';
+            }
+        }
+
+        @Service()
+        class TestService_Yfcnjg7rMnLp {
+            constructor(private serviceContainer: ServiceContainer) {}
+
+            public test() {
+                const service = this.serviceContainer.resolve<TestService_n3TZhF8PLp7J>(TestService_n3TZhF8PLp7J);
+                const result = service.test();
+                return result;
+            }
+        }
+
+        // Act
+        const service = services.resolve<TestService_Yfcnjg7rMnLp>(TestService_Yfcnjg7rMnLp);
+
+        // Assert
+        expect(service.test()).toEqual('test: TestService_n3TZhF8PLp7J');
     });
 });

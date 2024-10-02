@@ -1,4 +1,4 @@
-import ServiceContainer, { Lifecycle } from '../ServiceContainer';
+import { ServiceContainer, Lifecycle } from '../ServiceContainer';
 
 /**
  * Interface for service options.
@@ -32,6 +32,6 @@ export function Service(options?: ServiceOptions): ClassDecorator {
             options.lifecycle = 'transient';
         }
 
-        ServiceContainer.register(options.name!, target, options.lifecycle);
+        ServiceContainer.getInstance().register(options.name!, target, options.lifecycle);
     };
 }

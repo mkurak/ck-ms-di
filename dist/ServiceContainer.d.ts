@@ -7,13 +7,24 @@ import 'reflect-metadata';
  * - **scoped**: A new instance is created per session.
  */
 export type Lifecycle = 'singleton' | 'transient' | 'scoped';
+export interface IServiceContainer {
+    beginSession(): string;
+    endSession(sessionId: string): void;
+    register(name: string, classType: new (...args: any[]) => any, lifecycle: Lifecycle): void;
+    resolve<T>(nameOrType: any, sessionId?: string): T;
+    clear(): void;
+}
 /**
  * The service container that manages the registration, resolution, and lifecycle management of services.
  * Provides methods for creating sessions, resolving services, and handling dependencies.
+ * Implements the IServiceContainer interface.
  */
-declare class ServiceContainer {
+export declare class ServiceContainer implements IServiceContainer {
+    private static instance;
     private _services;
     private sessions;
+    private constructor();
+    static getInstance(): ServiceContainer;
     /**
      * Begins a new session and returns a unique session ID.
      *
@@ -69,9 +80,4 @@ declare class ServiceContainer {
      */
     private _resolveFromSession;
 }
-/**
- * The current instance of the service container.
- */
-declare const currentContainer: ServiceContainer;
-export default currentContainer;
 //# sourceMappingURL=ServiceContainer.d.ts.map

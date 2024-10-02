@@ -1,4 +1,2 @@
 export * from './decorators/Service';
-import ServiceContainer from './ServiceContainer';
-
-export { ServiceContainer };
+export * from './ServiceContainer';

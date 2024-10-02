@@ -1,15 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ServiceContainer = void 0;
 require("reflect-metadata");
 const uuid_1 = require("uuid");
 /**
  * The service container that manages the registration, resolution, and lifecycle management of services.
  * Provides methods for creating sessions, resolving services, and handling dependencies.
+ * Implements the IServiceContainer interface.
  */
 class ServiceContainer {
     constructor() {
         this._services = new Map();
         this.sessions = new Map();
+        // Private constructor to prevent direct instantiation
+    }
+    // Singleton instance getter
+    static getInstance() {
+        if (!ServiceContainer.instance) {
+            ServiceContainer.instance = new ServiceContainer();
+        }
+        return ServiceContainer.instance;
     }
     /**
      * Begins a new session and returns a unique session ID.
@@ -105,7 +115,7 @@ class ServiceContainer {
         const dependencies = Reflect.getMetadata('design:paramtypes', service.classType) || [];
         const resolvedDependencies = dependencies.map((dependency) => {
             if (dependency.name === 'ServiceContainer') {
-                return this;
+                return ServiceContainer.getInstance();
             }
             const depService = this._services.get(dependency.name);
             if (!depService) {
@@ -141,9 +151,5 @@ class ServiceContainer {
         return service === null || service === void 0 ? void 0 : service.instance;
     }
 }
-/**
- * The current instance of the service container.
- */
-const currentContainer = new ServiceContainer();
-exports.default = currentContainer;
+exports.ServiceContainer = ServiceContainer;
 //# sourceMappingURL=ServiceContainer.js.map

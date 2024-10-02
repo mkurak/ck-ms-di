@@ -38,13 +38,35 @@ interface SessionModel {
     services: Map<string, ServiceModel>;
 }
 
+export interface IServiceContainer {
+    beginSession(): string;
+    endSession(sessionId: string): void;
+    register(name: string, classType: new (...args: any[]) => any, lifecycle: Lifecycle): void;
+    resolve<T>(nameOrType: any, sessionId?: string): T;
+    clear(): void;
+}
+
 /**
  * The service container that manages the registration, resolution, and lifecycle management of services.
  * Provides methods for creating sessions, resolving services, and handling dependencies.
+ * Implements the IServiceContainer interface.
  */
-class ServiceContainer {
+export class ServiceContainer implements IServiceContainer {
+    private static instance: ServiceContainer;
     private _services: Map<string, ServiceModel> = new Map();
     private sessions: Map<string, SessionModel> = new Map();
+
+    private constructor() {
+        // Private constructor to prevent direct instantiation
+    }
+
+    // Singleton instance getter
+    public static getInstance(): ServiceContainer {
+        if (!ServiceContainer.instance) {
+            ServiceContainer.instance = new ServiceContainer();
+        }
+        return ServiceContainer.instance;
+    }
 
     /**
      * Begins a new session and returns a unique session ID.
@@ -157,7 +179,7 @@ class ServiceContainer {
 
         const resolvedDependencies = dependencies.map((dependency: any) => {
             if (dependency.name === 'ServiceContainer') {
-                return this;
+                return ServiceContainer.getInstance();
             }
 
             const depService = this._services.get(dependency.name);
@@ -201,10 +223,3 @@ class ServiceContainer {
         return service?.instance;
     }
 }
-
-/**
- * The current instance of the service container.
- */
-const currentContainer = new ServiceContainer();
-
-export default currentContainer;

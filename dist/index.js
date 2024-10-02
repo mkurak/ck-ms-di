@@ -13,12 +13,7 @@ var __createBinding = (this && this.__createBinding) || (Object.create ? (functi
 var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ServiceContainer = void 0;
 __exportStar(require("./decorators/Service"), exports);
-const ServiceContainer_1 = __importDefault(require("./ServiceContainer"));
-exports.ServiceContainer = ServiceContainer_1.default;
+__exportStar(require("./ServiceContainer"), exports);
 //# sourceMappingURL=index.js.map
