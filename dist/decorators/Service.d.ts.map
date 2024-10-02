@@ -1,1 +1,0 @@
-{"version":3,"file":"Service.d.ts","sourceRoot":"","sources":["../../src/decorators/Service.ts"],"names":[],"mappings":"AAAA,OAAO,EAAoB,SAAS,EAAE,MAAM,qBAAqB,CAAC;AAElE;;;;;;GAMG;AACH,MAAM,WAAW,cAAc;IAC3B,IAAI,CAAC,EAAE,MAAM,CAAC;IACd,SAAS,CAAC,EAAE,SAAS,CAAC;CACzB;AAED;;;;;GAKG;AACH,wBAAgB,OAAO,CAAC,OAAO,CAAC,EAAE,cAAc,GAAG,cAAc,CAgBhE"}
