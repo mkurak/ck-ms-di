@@ -42,6 +42,7 @@ jobs:
             - name: Get Package Version
               id: get_version
               run: echo 'VERSION=$(node -p "require(\'./package.json\').version")' >> $GITHUB_ENV
+              shell: bash
 
             - name: Create Git Tag
               run: |
