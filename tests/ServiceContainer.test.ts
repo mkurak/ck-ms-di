@@ -647,5 +647,23 @@ describe('ServiceContainer', () => {
             ServiceContainer.endSession(sessionId1);
             ServiceContainer.endSession(sessionId2);
         });
+
+        test('Bir soped servis çözülürken sessionId belirtilmezse hata fırlatılır.', () => {
+            // Arrange
+            @Service({ lifecycle: 'scoped' })
+            class TestService_fqyjnDU2GpvV {
+                constructor() {}
+
+                public test() {
+                    return 'test';
+                }
+            }
+
+            // Act
+            // Assert
+            expect(() => {
+                ServiceContainer.resolve<TestService_fqyjnDU2GpvV>('TestService_fqyjnDU2GpvV');
+            }).toThrow('Service with name TestService_fqyjnDU2GpvV is scoped and requires a session ID for resolution');
+        });
     });
 });

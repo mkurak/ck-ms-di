@@ -74,13 +74,16 @@ class ServiceContainer {
         if (!service) {
             throw new Error(`Service with name ${serviceName} does not exist`);
         }
+        if (service.lifecycle == 'scoped' && !sessionId) {
+            throw new Error(`Service with name ${serviceName} is scoped and requires a session ID for resolution`);
+        }
         if (service.lifecycle == 'scoped' && sessionId) {
             return this._resolveFromSession(service, sessionId);
         }
         if (service.lifecycle === 'singleton' && service.instance) {
             return service.instance;
         }
-        return this._createInstance(service);
+        return this._createInstance(service, sessionId);
     }
     /**
      * Clears all registered services and sessions.
