@@ -127,7 +127,10 @@ describe('ServiceContainer', () => {
 
             @Service({ lifecycle: 'singleton' })
             class TestService_3f5rYHb4jG5t2 {
-                constructor(private testService1: TestService_WJVeSTZbKuq7, private testService2: TestService_WJVeSTZbKuq7) {}
+                constructor(
+                    private testService1: TestService_WJVeSTZbKuq7,
+                    private testService2: TestService_WJVeSTZbKuq7,
+                ) {}
 
                 public test1() {
                     return this.testService1.test();
@@ -157,7 +160,10 @@ describe('ServiceContainer', () => {
 
             @Service({ lifecycle: 'singleton' })
             class TestService_Sd7TTnPvMuTT {
-                constructor(private testService1: TestService_Bk3SdD6NkQ4U, private testService2: TestService_Bk3SdD6NkQ4U) {}
+                constructor(
+                    private testService1: TestService_Bk3SdD6NkQ4U,
+                    private testService2: TestService_Bk3SdD6NkQ4U,
+                ) {}
 
                 public test1() {
                     return this.testService1.test();
@@ -233,7 +239,10 @@ describe('ServiceContainer', () => {
 
             @Service({ lifecycle: 'singleton' })
             class TestService_W32HcpB8bDHE {
-                constructor(private transientService: TestService_HNAuX8nxSUwB, private singletonService: TestService_TxL4WkhtxCZ8) {}
+                constructor(
+                    private transientService: TestService_HNAuX8nxSUwB,
+                    private singletonService: TestService_TxL4WkhtxCZ8,
+                ) {}
 
                 public test() {
                     return {
@@ -279,7 +288,11 @@ describe('ServiceContainer', () => {
             expect(() => {
                 @Service({ lifecycle: 'singleton' })
                 class TestService_nTfNHUGVQLfZ {
-                    constructor(private transientService: TestService_5qcmAFeFv5f6V, private singletonService: TestService_Yg6FPVcJpuh6, private stringParameter: string) {}
+                    constructor(
+                        private transientService: TestService_5qcmAFeFv5f6V,
+                        private singletonService: TestService_Yg6FPVcJpuh6,
+                        private stringParameter: string,
+                    ) {}
 
                     public test() {
                         return {
@@ -402,7 +415,10 @@ describe('ServiceContainer', () => {
 
             @Service()
             class TestService_uAkqRgPLFxce {
-                constructor(private singletonService: TestService_ftgbzLxS54Jx, private singletonService2: TestService_7jdwpZmnrk7c) {}
+                constructor(
+                    private singletonService: TestService_ftgbzLxS54Jx,
+                    private singletonService2: TestService_7jdwpZmnrk7c,
+                ) {}
 
                 public test() {
                     return {
@@ -463,7 +479,10 @@ describe('ServiceContainer', () => {
 
             @Service()
             class TestService_hS6pSPuaPCHF {
-                constructor(private transientService: TestService_wDuJgPnKpXvh, private transientService2: TestService_UNgqJyxNyspJ) {}
+                constructor(
+                    private transientService: TestService_wDuJgPnKpXvh,
+                    private transientService2: TestService_UNgqJyxNyspJ,
+                ) {}
 
                 public test() {
                     return {
@@ -669,7 +688,7 @@ describe('ServiceContainer', () => {
         });
     });
 
-    test('Servis ServiceContainer sınıfına bağımlıysa, güncel instance kendisine verilir.', () => {
+    test('If a service depends on the ServiceContainer class, the current instance is provided to it.', () => {
         // Arrange
         @Service()
         class TestService_n3TZhF8PLp7J {
