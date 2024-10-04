@@ -716,4 +716,33 @@ describe('ServiceContainer', () => {
         // Assert
         expect(service.test()).toEqual('test: TestService_n3TZhF8PLp7J');
     });
+
+    test("Eğer instance'ı oluşturulan servisin init metodu varsa, bu metot otomatik olarak tetiklenir.", () => {
+        // Arrange
+        @Service()
+        class TestService_kpTmzMXaPaXx {
+            private testOutput?: string;
+
+            constructor() {}
+
+            public test() {
+                return this.testOutput;
+            }
+
+            public init() {
+                this.testOutput = 'test2test';
+            }
+
+            public get output() {
+                return this.testOutput;
+            }
+        }
+
+        // Act
+        const service = services.resolve<TestService_kpTmzMXaPaXx>(TestService_kpTmzMXaPaXx);
+        service.test();
+
+        // Assert
+        expect(service.output).toBe('test2test');
+    });
 });

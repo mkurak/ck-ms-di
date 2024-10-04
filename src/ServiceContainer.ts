@@ -50,6 +50,9 @@ export interface IServiceContainer {
  * The service container that manages the registration, resolution, and lifecycle management of services.
  * Provides methods for creating sessions, resolving services, and handling dependencies.
  * Implements the IServiceContainer interface.
+ *
+ * Changes [04/10/2021]:
+ * - Added init method to the service instance if it exists.
  */
 export class ServiceContainer implements IServiceContainer {
     private static instance: ServiceContainer;
@@ -194,7 +197,12 @@ export class ServiceContainer implements IServiceContainer {
             return this.resolve(dependency.name, sessionId);
         });
 
-        return new service.classType(...resolvedDependencies);
+        const instance = new service.classType(...resolvedDependencies);
+        if (instance['init']) {
+            instance['init']();
+        }
+
+        return instance;
     }
 
     /**
