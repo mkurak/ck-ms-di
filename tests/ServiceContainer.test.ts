@@ -717,7 +717,7 @@ describe('ServiceContainer', () => {
         expect(service.test()).toEqual('test: TestService_n3TZhF8PLp7J');
     });
 
-    test("Eğer instance'ı oluşturulan servisin init metodu varsa, bu metot otomatik olarak tetiklenir.", () => {
+    test('If the instantiated service has an init method, this method is automatically triggered.', () => {
         // Arrange
         @Service()
         class TestService_kpTmzMXaPaXx {
