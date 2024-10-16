@@ -1,25 +1,25 @@
 import 'reflect-metadata';
-import { ServiceOptions, Service, Lifecycle, ServiceContainer } from '../src';
+import { Service, ServiceContainer } from '../src';
 
 describe('ServiceContainer Tests', () => {
-    it("ServiceContainer instance'ına erişilebilir", () => {
+    it('ServiceContainer instance can be accessed', () => {
         const container = ServiceContainer.getInstance();
         expect(container).toBeDefined();
     });
 
-    it("ServiceContainer instance'ı singleton'dır", () => {
+    it('ServiceContainer instance is a singleton', () => {
         const container1 = ServiceContainer.getInstance();
         const container2 = ServiceContainer.getInstance();
         expect(container1).toBe(container2);
     });
 
-    it('Başlangıçta hiçbir servis tanımlı değildir', () => {
+    it('No services are defined initially', () => {
         const container = ServiceContainer.getInstance();
         expect(container.foundedServicesCount).toBe(0);
     });
 
-    describe('Injection içermeyen servisler', () => {
-        it('Singleton servis tanımlanabilir (string tipinde isim verilerek)', async () => {
+    describe('Services without Injection', () => {
+        it('Singleton service can be defined (with string type name)', async () => {
             @Service({ lifecycle: 'singleton' })
             class dBRJBdWj9Bm2 {
                 public value: number = 5;
@@ -33,7 +33,7 @@ describe('ServiceContainer Tests', () => {
             expect(service?.value).toBe(5);
         });
 
-        it('Singleton servis tanımlanabilir (tip verilerek)', async () => {
+        it('Singleton service can be defined (with type)', async () => {
             @Service({ lifecycle: 'singleton' })
             class dBRJBdWj9Bm2 {
                 public value: number = 5;
@@ -47,7 +47,7 @@ describe('ServiceContainer Tests', () => {
             expect(service?.value).toBe(5);
         });
 
-        it('Tanımlanan singleton servis çağrıldığında aynı instance döner', async () => {
+        it('The same instance is returned when the defined singleton service is called', async () => {
             @Service({ lifecycle: 'singleton' })
             class tmjZvWgmySPe {
                 public value: number = 5;
@@ -61,7 +61,7 @@ describe('ServiceContainer Tests', () => {
             expect(service1).toBe(service2);
         });
 
-        it('Transient servis tanımlanabilir (string tipinde isim verilerek)', async () => {
+        it('Transient service can be defined (with string type name)', async () => {
             @Service({ lifecycle: 'transient' })
             class e2hvPSqxRfaj {
                 public value: number = 5;
@@ -75,7 +75,7 @@ describe('ServiceContainer Tests', () => {
             expect(service?.value).toBe(5);
         });
 
-        it('Transient servis tanımlanabilir (tip verilerek)', async () => {
+        it('Transient service can be defined (with type)', async () => {
             @Service({ lifecycle: 'transient' })
             class dNxNyZxBPXp9 {
                 public value: number = 5;
@@ -89,7 +89,7 @@ describe('ServiceContainer Tests', () => {
             expect(service?.value).toBe(5);
         });
 
-        it("Tanımlanan transient servis çağrıldığında farklı instance'lar döner", async () => {
+        it('Different instances are returned when the defined transient service is called', async () => {
             @Service({ lifecycle: 'transient' })
             class VNhk7mM8QZpB {
                 public value: number = 5;
@@ -103,7 +103,7 @@ describe('ServiceContainer Tests', () => {
             expect(service1).not.toBe(service2);
         });
 
-        it('Scoped servis tanımlanabilir (string tipinde isim verilerek)', async () => {
+        it('Scoped service can be defined (with string type name)', async () => {
             @Service({ lifecycle: 'scoped' })
             class zrTftRRzZG4j {
                 public value: number = 5;
@@ -120,7 +120,7 @@ describe('ServiceContainer Tests', () => {
             container.endSession(sessionId);
         });
 
-        it('Singleton tipinde eklenmiş bir servis session içerisinde bulunamaz', async () => {
+        it('A service added as singleton cannot be found within a session', async () => {
             @Service({ lifecycle: 'singleton' })
             class Avk2YQNyKBvU {
                 public value: number = 5;
@@ -135,7 +135,7 @@ describe('ServiceContainer Tests', () => {
             container.endSession(sessionId);
         });
 
-        it('Transient tipinde eklenmiş bir servis session içerisinde bulunamaz', async () => {
+        it('A service added as transient cannot be found within a session', async () => {
             @Service({ lifecycle: 'transient' })
             class bnYpPTEvNtLF {
                 public value: number = 5;
@@ -151,8 +151,8 @@ describe('ServiceContainer Tests', () => {
         });
     });
 
-    describe('Injection içeren servisler', () => {
-        it('Injection içeren servisler tanımlanabilir', async () => {
+    describe('Services with Injection', () => {
+        it('Services with injection can be defined', async () => {
             @Service({ lifecycle: 'singleton' })
             class hTp3LptHUTWd {
                 public value: number = 5;
@@ -183,7 +183,7 @@ describe('ServiceContainer Tests', () => {
             expect(service?.sum()).toBe(15);
         });
 
-        it("Singleton servis, scoped servis'i injection olarak alamaz", async () => {
+        it('Singleton service cannot inject scoped service', async () => {
             @Service({ lifecycle: 'singleton' })
             class dsLGCCsTNket {
                 public value: number = 5;
