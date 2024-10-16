@@ -3,7 +3,7 @@ import { ServiceContainer } from '../ServiceContainer';
 
 export interface ServiceOptions {
     name?: string;
-    lifecycle?: 'singleton' | 'transient';
+    lifecycle?: 'singleton' | 'transient' | 'scoped';
 }
 
 export function Service(options?: ServiceOptions) {
@@ -11,9 +11,9 @@ export function Service(options?: ServiceOptions) {
         const name = options?.name || target.name;
         const lifecycle = options?.lifecycle || 'transient';
 
-        (async () => {
-            const container = ServiceContainer.getInstance();
-            await container.registerAsync(name, target, lifecycle);
-        })();
+        Reflect.defineMetadata('ck:service', name, target);
+
+        const container = ServiceContainer.getInstance();
+        container.register(name, target, lifecycle);
     };
 }

@@ -92,57 +92,72 @@ export class ServiceContainer {
     }
 
     public async resolveAsync<T>(nameOrType: any, sessionId?: string): Promise<T | undefined> {
+        let serviceName: string = typeof nameOrType === 'string' ? nameOrType : nameOrType.name;
         let service: ServiceModel | undefined;
 
-        if (typeof nameOrType === 'string') {
-            service = this._services.get(nameOrType);
-        } else {
-            service = this._services.get(nameOrType.name);
-        }
-
-        if (!service) {
-            console.error(`Service with name ${nameOrType} does not exist`);
-            return undefined;
-        }
-
-        if (service.lifecycle == 'singleton') {
-            if (!service.instance) {
-                service.instance = await this._createInstanceAsync(service, sessionId);
-            }
-
-            return service.instance;
-        }
-
-        if (service.lifecycle == 'transient') {
-            return await this._createInstanceAsync(service, sessionId);
-        }
-
-        if (service.lifecycle == 'scoped') {
-            if (!sessionId) {
-                console.error(`Service with name ${service.name} is scoped and requires a session id to resolve`);
-                return undefined;
-            }
-
+        if (sessionId) {
             const session = this._sessions.get(sessionId);
-            if (!session) {
+            if (session) {
+                const service = session.services.get(serviceName);
+                if (!service) {
+                    const serviceMain = this._services.get(serviceName);
+                    if (!serviceMain) {
+                        console.error(`Service with name ${serviceName} does not exist`);
+                        return undefined;
+                    }
+
+                    if (serviceMain.lifecycle !== 'scoped') {
+                        console.error(`Service with name ${serviceName} is not scoped`);
+                        return undefined;
+                    }
+
+                    const newService = {
+                        name: serviceName,
+                        lifecycle: 'scoped',
+                        classType: serviceMain.classType,
+                    } as ServiceModel;
+                    newService.instance = await this._createInstanceAsync(newService, sessionId);
+                    session.services.set(serviceName, newService);
+
+                    return newService.instance;
+                } else {
+                    return service.instance;
+                }
+            } else {
                 console.error(`Session with id ${sessionId} does not exist`);
                 return undefined;
             }
-
-            if (!session.services.has(service.name)) {
-                const instance = await this._createInstanceAsync(service, sessionId);
-                session.services.set(service.name, { ...service, instance });
+        } else {
+            service = this._services.get(serviceName);
+            if (!service) {
+                console.error(`Service with name ${nameOrType} does not exist`);
+                return undefined;
             }
 
-            return session.services.get(service.name)?.instance;
+            switch (service.lifecycle) {
+                case 'singleton':
+                    if (!service.instance) {
+                        service.instance = await this._createInstanceAsync(service);
+                    }
+                    return service.instance;
+                case 'transient':
+                    return await this._createInstanceAsync(service);
+                default:
+                    console.error(`Service with name ${nameOrType} is scoped and requires a session id to resolve`);
+                    return undefined;
+            }
         }
-
-        return undefined;
     }
 
-    public async registerAsync(name: string, classType: new (...args: any[]) => any, lifecycle: Lifecycle): Promise<void> {
+    public register(name: string, classType: new (...args: any[]) => any, lifecycle: Lifecycle): void {
         if (this._services.has(name)) {
             console.error(`Service with name ${name} already exists`);
+            return;
+        }
+
+        const metadata = Reflect.getMetadata('ck:service', classType);
+        if (!metadata || metadata !== name) {
+            console.error(`Decorator not used for the service. You must use the @Service decorator to add the service... Service name: ${name}`);
             return;
         }
 
@@ -152,15 +167,19 @@ export class ServiceContainer {
             classType,
         } as ServiceModel;
 
-        if (lifecycle === 'singleton') {
-            service.instance = await this._createInstanceAsync(service);
-        }
-
         this._services.set(name, service);
     }
 
     public clear(): void {
         this._services.clear();
         this._sessions.clear();
+    }
+
+    public get foundedServicesCount(): number {
+        return this._services.size;
+    }
+
+    public get foundedSessionsCount(): number {
+        return this._sessions.size;
     }
 }
