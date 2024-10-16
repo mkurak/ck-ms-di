@@ -1,37 +1,19 @@
-import { ServiceContainer, Lifecycle } from '../ServiceContainer';
+import 'reflect-metadata';
+import { ServiceContainer } from '../ServiceContainer';
 
-/**
- * Interface for service options.
- *
- * @interface ServiceOptions
- * @property {string} [name] - The name of the service (optional).
- * @property {Lifecycle} [lifecycle] - The lifecycle of the service (optional).
- */
 export interface ServiceOptions {
     name?: string;
-    lifecycle?: Lifecycle;
+    lifecycle?: 'singleton' | 'transient' | 'scoped';
 }
 
-/**
- * A class decorator function that registers a class as a service.
- *
- * @param {ServiceOptions} [options] - Optional configuration for the service.
- * @returns {ClassDecorator} - A decorator that registers the class as a service.
- */
-export function Service(options?: ServiceOptions): ClassDecorator {
+export function Service(options?: ServiceOptions) {
     return function (target: any) {
-        if (!options) {
-            options = {} as ServiceOptions;
-        }
+        const name = options?.name || target.name;
+        const lifecycle = options?.lifecycle || 'transient';
 
-        if (!options.name) {
-            options.name = target.name;
-        }
+        Reflect.defineMetadata('ck:service', name, target);
 
-        if (!options.lifecycle) {
-            options.lifecycle = 'transient';
-        }
-
-        ServiceContainer.getInstance().register(options.name!, target, options.lifecycle);
+        const container = ServiceContainer.getInstance();
+        container.register(name, target, lifecycle);
     };
 }

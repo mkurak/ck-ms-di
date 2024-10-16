@@ -1,2 +1,3 @@
-export * from './decorators/Service';
-export * from './ServiceContainer';
+import 'reflect-metadata';
+export * from '../src/decorators/Service';
+export * from '../src/ServiceContainer';

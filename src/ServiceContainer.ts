@@ -1,25 +1,8 @@
 import 'reflect-metadata';
 import { v4 as uuidv4 } from 'uuid';
 
-/**
- * Type representing the lifecycle of a service.
- *
- * - **singleton**: Only one instance of the service is created and reused.
- * - **transient**: A new instance is created each time the service is requested.
- * - **scoped**: A new instance is created per session.
- */
 export type Lifecycle = 'singleton' | 'transient' | 'scoped';
 
-/**
- * Interface representing a service model within the container.
- *
- * @interface ServiceModel
- * @property {string} name - The name of the service.
- * @property {Lifecycle} lifecycle - The lifecycle of the service.
- * @property {new (...args: any[]) => any} classType - The class constructor for the service.
- * @property {any} [instance] - The instance of the service (optional, for singleton services).
- * @property {string} [sessionId] - The session ID for scoped services (optional).
- */
 interface ServiceModel {
     name: string;
     lifecycle: Lifecycle;
@@ -28,12 +11,6 @@ interface ServiceModel {
     sessionId?: string;
 }
 
-/**
- * Interface representing a session model, which holds the services for a specific session.
- *
- * @interface SessionModel
- * @property {Map<string, ServiceModel>} services - A map of service names to their corresponding service models within the session.
- */
 interface SessionModel {
     services: Map<string, ServiceModel>;
 }
@@ -41,73 +18,157 @@ interface SessionModel {
 export interface IServiceContainer {
     beginSession(): string;
     endSession(sessionId: string): void;
+    resolveAsync<T>(nameOrType: any, sessionId?: string): Promise<T | undefined>;
     register(name: string, classType: new (...args: any[]) => any, lifecycle: Lifecycle): void;
-    resolve<T>(nameOrType: any, sessionId?: string): T;
     clear(): void;
+    get foundedServicesCount(): number;
+    get foundedSessionsCount(): number;
 }
 
-/**
- * The service container that manages the registration, resolution, and lifecycle management of services.
- * Provides methods for creating sessions, resolving services, and handling dependencies.
- * Implements the IServiceContainer interface.
- *
- * Changes [04/10/2021]:
- * - Added init method to the service instance if it exists.
- */
 export class ServiceContainer implements IServiceContainer {
-    private static instance: ServiceContainer;
+    private static _instance: ServiceContainer;
     private _services: Map<string, ServiceModel> = new Map();
-    private sessions: Map<string, SessionModel> = new Map();
+    private _sessions: Map<string, SessionModel> = new Map();
 
-    private constructor() {
-        // Private constructor to prevent direct instantiation
-    }
+    private constructor() {}
 
-    // Singleton instance getter
-    public static getInstance(): ServiceContainer {
-        if (!ServiceContainer.instance) {
-            ServiceContainer.instance = new ServiceContainer();
+    public static getInstance() {
+        if (!ServiceContainer._instance) {
+            ServiceContainer._instance = new ServiceContainer();
         }
-        return ServiceContainer.instance;
+
+        return ServiceContainer._instance;
     }
 
-    /**
-     * Begins a new session and returns a unique session ID.
-     *
-     * @returns {string} - The generated session ID.
-     */
     public beginSession(): string {
         const sessionId = uuidv4();
 
-        if (this.sessions.has(sessionId)) {
+        if (this._sessions.has(sessionId)) {
             return this.beginSession();
         }
 
-        this.sessions.set(sessionId, { services: new Map() });
+        this._sessions.set(sessionId, { services: new Map() });
 
         return sessionId;
     }
 
-    /**
-     * Ends the specified session and removes it from the container.
-     *
-     * @param {string} sessionId - The ID of the session to end.
-     */
     public endSession(sessionId: string): void {
-        this.sessions.delete(sessionId);
+        this._sessions.delete(sessionId);
     }
 
-    /**
-     * Registers a service with the container.
-     *
-     * @param {string} name - The name of the service.
-     * @param {new (...args: any[]) => any} classType - The class constructor for the service.
-     * @param {Lifecycle} lifecycle - The lifecycle of the service.
-     * @throws {Error} If a service with the same name already exists.
-     */
+    private async _createInstanceAsync<T>(service: ServiceModel, sessionId?: string): Promise<T> {
+        const dependencies = Reflect.getMetadata('design:paramtypes', service.classType) || [];
+
+        let resolvedDependencies: Array<any> = new Array();
+
+        for (let dependency of dependencies) {
+            if (dependency.name === 'ServiceContainer') {
+                resolvedDependencies.push(this);
+                continue;
+            }
+
+            if (!this._services.has(dependency.name)) {
+                resolvedDependencies.push(undefined);
+                continue;
+            }
+
+            const depService = this._services.get(dependency.name);
+            if (!depService) {
+                console.error(`Dependency with type ${dependency.name} does not exist for service ${service.name}`);
+                resolvedDependencies.push(undefined);
+                continue;
+            }
+
+            if (service.lifecycle == 'singleton' && depService?.lifecycle == 'scoped') {
+                console.error(`Service with name ${dependency.name} is scoped and cannot be injected into a singleton service`);
+                resolvedDependencies.push(undefined);
+                continue;
+            }
+
+            const _service = await this.resolveAsync(dependency.name, sessionId);
+            resolvedDependencies.push(_service);
+        }
+
+        const instance = new service.classType(...resolvedDependencies);
+        if (instance['init']) {
+            const initResult = instance['init']();
+
+            if (initResult instanceof Promise) {
+                await initResult;
+            }
+        }
+
+        return instance;
+    }
+
+    public async resolveAsync<T>(nameOrType: any, sessionId?: string): Promise<T | undefined> {
+        let serviceName: string = typeof nameOrType === 'string' ? nameOrType : nameOrType.name;
+        let service: ServiceModel | undefined;
+
+        if (sessionId) {
+            const session = this._sessions.get(sessionId);
+            if (session) {
+                const service = session.services.get(serviceName);
+                if (!service) {
+                    const serviceMain = this._services.get(serviceName);
+                    if (!serviceMain) {
+                        console.error(`Service with name ${serviceName} does not exist`);
+                        return undefined;
+                    }
+
+                    if (serviceMain.lifecycle !== 'scoped') {
+                        console.error(`Service with name ${serviceName} is not scoped`);
+                        return undefined;
+                    }
+
+                    const newService = {
+                        name: serviceName,
+                        lifecycle: 'scoped',
+                        classType: serviceMain.classType,
+                    } as ServiceModel;
+                    newService.instance = await this._createInstanceAsync(newService, sessionId);
+                    session.services.set(serviceName, newService);
+
+                    return newService.instance;
+                } else {
+                    return service.instance;
+                }
+            } else {
+                console.error(`Session with id ${sessionId} does not exist`);
+                return undefined;
+            }
+        } else {
+            service = this._services.get(serviceName);
+            if (!service) {
+                console.error(`Service with name ${nameOrType} does not exist`);
+                return undefined;
+            }
+
+            switch (service.lifecycle) {
+                case 'singleton':
+                    if (!service.instance) {
+                        service.instance = await this._createInstanceAsync(service);
+                    }
+                    return service.instance;
+                case 'transient':
+                    return await this._createInstanceAsync(service);
+                default:
+                    console.error(`Service with name ${nameOrType} is scoped and requires a session id to resolve`);
+                    return undefined;
+            }
+        }
+    }
+
     public register(name: string, classType: new (...args: any[]) => any, lifecycle: Lifecycle): void {
         if (this._services.has(name)) {
-            throw new Error(`Service with name ${name} already exists`);
+            console.error(`Service with name ${name} already exists`);
+            return;
+        }
+
+        const metadata = Reflect.getMetadata('ck:service', classType);
+        if (!metadata || metadata !== name) {
+            console.error(`Decorator not used for the service. You must use the @Service decorator to add the service... Service name: ${name}`);
+            return;
         }
 
         const service = {
@@ -116,118 +177,19 @@ export class ServiceContainer implements IServiceContainer {
             classType,
         } as ServiceModel;
 
-        if (lifecycle === 'singleton') {
-            service.instance = this._createInstance(service);
-        }
-
         this._services.set(name, service);
     }
 
-    /**
-     * Resolves a service by name or class type.
-     *
-     * @param {string | any} nameOrType - The name or constructor of the service.
-     * @param {string} [sessionId] - The session ID for resolving scoped services.
-     * @returns {T} - The resolved service instance.
-     * @throws {Error} If the service does not exist or if there are lifecycle conflicts.
-     */
-    public resolve<T>(nameOrType: any, sessionId?: string): T {
-        let serviceName: string | null = null;
-
-        if (typeof nameOrType === 'string') {
-            serviceName = nameOrType;
-        } else {
-            serviceName = nameOrType.name;
-        }
-
-        const service = this._services.get(serviceName!);
-        if (!service) {
-            throw new Error(`Service with name ${serviceName} does not exist`);
-        }
-
-        if (service.lifecycle == 'scoped' && !sessionId) {
-            throw new Error(`Service with name ${serviceName} is scoped and requires a session ID for resolution`);
-        }
-
-        if (service.lifecycle == 'scoped' && sessionId) {
-            return this._resolveFromSession<T>(service, sessionId);
-        }
-
-        if (service.lifecycle === 'singleton' && service.instance) {
-            return service.instance;
-        }
-
-        return this._createInstance<T>(service, sessionId);
-    }
-
-    /**
-     * Clears all registered services and sessions.
-     */
     public clear(): void {
         this._services.clear();
-        this.sessions.clear();
+        this._sessions.clear();
     }
 
-    /**
-     * Creates an instance of the given service, resolving its dependencies.
-     *
-     * @private
-     * @param {ServiceModel} service - The service model to create an instance of.
-     * @param {string} [sessionId] - The session ID for resolving scoped services.
-     * @returns {T} - The created service instance.
-     * @throws {Error} If there is a dependency that cannot be resolved.
-     */
-    private _createInstance<T>(service: ServiceModel, sessionId?: string): T {
-        const dependencies = Reflect.getMetadata('design:paramtypes', service.classType) || [];
-
-        const resolvedDependencies = dependencies.map((dependency: any) => {
-            if (dependency.name === 'ServiceContainer') {
-                return ServiceContainer.getInstance();
-            }
-
-            const depService = this._services.get(dependency.name);
-            if (!depService) {
-                throw new Error(`Dependency with type ${dependency.name} does not exist for service ${service.name}`);
-            }
-
-            if (service.lifecycle == 'singleton' && depService?.lifecycle == 'scoped') {
-                throw new Error(`Service with name ${dependency.name} is scoped and cannot be injected into a singleton service`);
-            }
-
-            return this.resolve(dependency.name, sessionId);
-        });
-
-        const instance = new service.classType(...resolvedDependencies);
-        if (instance['init']) {
-            instance['init']();
-        }
-
-        return instance;
+    public get foundedServicesCount(): number {
+        return this._services.size;
     }
 
-    /**
-     * Resolves a scoped service from a session.
-     *
-     * @private
-     * @param {ServiceModel} service - The service model to resolve.
-     * @param {string} sessionId - The session ID for the scoped service.
-     * @returns {T} - The resolved service instance.
-     * @throws {Error} If the session does not exist.
-     */
-    private _resolveFromSession<T>(service: ServiceModel, sessionId: string): T {
-        const session = this.sessions.get(sessionId);
-        if (!session) {
-            throw new Error(`Session with id ${sessionId} does not exist`);
-        }
-
-        const scopedService = session.services.get(service.name);
-        if (scopedService) {
-            return scopedService?.instance;
-        }
-
-        service.instance = this._createInstance(service, sessionId);
-        session.services.set(service.name, service);
-
-        return service?.instance;
+    public get foundedSessionsCount(): number {
+        return this._sessions.size;
     }
 }
