@@ -15,7 +15,17 @@ interface SessionModel {
     services: Map<string, ServiceModel>;
 }
 
-export class ServiceContainer {
+export interface IServiceContainer {
+    beginSession(): string;
+    endSession(sessionId: string): void;
+    resolveAsync<T>(nameOrType: any, sessionId?: string): Promise<T | undefined>;
+    register(name: string, classType: new (...args: any[]) => any, lifecycle: Lifecycle): void;
+    clear(): void;
+    get foundedServicesCount(): number;
+    get foundedSessionsCount(): number;
+}
+
+export class ServiceContainer implements IServiceContainer {
     private static _instance: ServiceContainer;
     private _services: Map<string, ServiceModel> = new Map();
     private _sessions: Map<string, SessionModel> = new Map();
@@ -42,7 +52,7 @@ export class ServiceContainer {
         return sessionId;
     }
 
-    public endSession(sessionId: string) {
+    public endSession(sessionId: string): void {
         this._sessions.delete(sessionId);
     }
 
