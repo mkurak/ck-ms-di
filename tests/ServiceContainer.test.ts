@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Service, ServiceContainer } from '../src';
+import { IServiceContainer, Service, ServiceContainer } from '../src';
 
 describe('ServiceContainer Tests', () => {
     it('ServiceContainer instance can be accessed', () => {
@@ -215,6 +215,24 @@ describe('ServiceContainer Tests', () => {
             expect(service?.service1.value).toBe(5);
             expect(service?.service2).toBeUndefined();
             expect(service?.sum()).toBe(5);
+        });
+
+        it('IServiceContainer can be injected into services', async () => {
+            @Service({ lifecycle: 'singleton' })
+            class sBqQJGvkCUPK {
+                constructor(private container: ServiceContainer) {}
+
+                public getContainer(): ServiceContainer {
+                    return this.container;
+                }
+            }
+
+            const container = ServiceContainer.getInstance();
+
+            const service = await container.resolveAsync<sBqQJGvkCUPK>(sBqQJGvkCUPK);
+
+            expect(service).toBeDefined();
+            expect(service?.getContainer()).toBe(container);
         });
     });
 });
